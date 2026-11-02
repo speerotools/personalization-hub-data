@@ -119,17 +119,28 @@ def lines(text):
     """Multiline text -> list items, without bullets or numbering."""
     out = []
     for ln in str(text or "").splitlines():
-        ln = re.sub(r"^\s*(?:[-*\u2022\u2013]|\d+[.)])\s*", "", ln).strip()
+        # Numbering needs a space after it, so "4.7/5 on G2" keeps its "4."
+        ln = re.sub(r"^\s*(?:[-*\u2022\u2013]\s*|\d+[.)]\s+)", "", ln).strip()
         if ln:
             out.append(ln)
     return out
 
 
+SHAPE_KEEP = set(":|;,-*#>[]{}()\"'•–—\n")
+
+
 def shape(s, n=40):
-    """Letters to a/A, digits to 9, everything else kept: shows delimiters and
-    line structure without the words, for the public comparison."""
-    s = re.sub(r"[a-z]", "a", re.sub(r"[A-Z]", "A", re.sub(r"[0-9]", "9", str(s))))
-    return s[:n].replace("\n", "\\n")
+    """The structure of a raw value for the public comparison: a fixed set of
+    separators is kept, and every other run of characters (words, spaces, any
+    script) collapses to one 'x', so neither words, their lengths nor their
+    number show. "Connected: Completed orders, visits" -> "x:x,x"."""
+    out = []
+    for ch in str(s):
+        tok = ch if ch in SHAPE_KEEP else "x"
+        if tok == "x" and out and out[-1] == "x":
+            continue
+        out.append(tok)
+    return "".join(out)[:n].replace("\n", "\\n")
 
 
 def text(f, name):
@@ -203,7 +214,9 @@ def read_airtable(tables: dict, problems: Problems) -> dict:
     def signals(f, contexts, where):
         out = []
         for ln in lines(f.get("Signals")):
-            m = re.match(r"^([A-Za-z]+)\s*[:\u2014\u2013-]\s*(.+)$", ln)
+            # "[Connected] text" in the base; "Connected: text" also accepted.
+            m = (re.match(r"^\[\s*([A-Za-z]+)\s*\]\s*(.+)$", ln)
+                 or re.match(r"^([A-Za-z]+)\s*[:\u2014\u2013-]\s*(.+)$", ln))
             kind = signal_label.get(m.group(1).lower()) if m else None
             if kind:
                 out.append({"kind": kind, "example": m.group(2).strip()})

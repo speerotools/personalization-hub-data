@@ -1,0 +1,860 @@
+{
+ "base": "appulGzKcE8TQIO70",
+ "tables": [
+  {
+   "name": "Opportunities",
+   "id": "tblc9Gd2YI8wVHiVc",
+   "records": 41,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Title",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Situation",
+     "type": "singleSelect",
+     "choiceCount": 4
+    },
+    {
+     "name": "Stage",
+     "type": "singleSelect",
+     "choiceCount": 6
+    },
+    {
+     "name": "Contexts",
+     "type": "multipleSelects",
+     "choiceCount": 3
+    },
+    {
+     "name": "Intents",
+     "type": "multipleSelects",
+     "choiceCount": 3
+    },
+    {
+     "name": "Business Models",
+     "type": "multipleSelects",
+     "choiceCount": 5
+    },
+    {
+     "name": "Summary",
+     "type": "multilineText"
+    },
+    {
+     "name": "What's Going On",
+     "type": "multilineText"
+    },
+    {
+     "name": "Why It Earns Complexity",
+     "type": "multilineText"
+    },
+    {
+     "name": "Confusion To Avoid",
+     "type": "multilineText"
+    },
+    {
+     "name": "Signals",
+     "type": "multilineText"
+    },
+    {
+     "name": "Response — Assist",
+     "type": "multilineText"
+    },
+    {
+     "name": "Response — Adapt",
+     "type": "multilineText"
+    },
+    {
+     "name": "Response — Transform",
+     "type": "multilineText"
+    },
+    {
+     "name": "Test Control",
+     "type": "multilineText"
+    },
+    {
+     "name": "Test Treatment",
+     "type": "multilineText"
+    },
+    {
+     "name": "Primary Metric",
+     "type": "multilineText"
+    },
+    {
+     "name": "Guardrail",
+     "type": "multilineText"
+    },
+    {
+     "name": "Pitfalls",
+     "type": "multilineText"
+    },
+    {
+     "name": "Tools",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblVRHJIPiLDERGNT"
+    },
+    {
+     "name": "Related Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "From field: Related Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "Applications",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tbljNQySv3o1rK5ug"
+    },
+    {
+     "name": "Concepts",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblhvkRYAKJHVextV"
+    },
+    {
+     "name": "Practices",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tbl2mF7Xa2OeIWPx3"
+    },
+    {
+     "name": "Eligibility Rule",
+     "type": "multilineText"
+    },
+    {
+     "name": "Test Audience Readout",
+     "type": "multilineText"
+    },
+    {
+     "name": "Plays",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblSExuX57VMkTeEX"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    },
+    {
+     "name": "Reach Prompt",
+     "type": "multilineText"
+    },
+    {
+     "name": "Cost Prompt",
+     "type": "multilineText"
+    },
+    {
+     "name": "Return Prompt",
+     "type": "multilineText"
+    },
+    {
+     "name": "Response Format",
+     "type": "singleSelect",
+     "choiceCount": 4
+    },
+    {
+     "name": "Learning Loop",
+     "type": "multilineText"
+    },
+    {
+     "name": "Website URL",
+     "type": "url"
+    }
+   ]
+  },
+  {
+   "name": "Tools",
+   "id": "tblVRHJIPiLDERGNT",
+   "records": 36,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Name",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Stack Role",
+     "type": "singleSelect",
+     "choiceCount": 6
+    },
+    {
+     "name": "Summary",
+     "type": "multilineText"
+    },
+    {
+     "name": "Connected Data",
+     "type": "multilineText"
+    },
+    {
+     "name": "Business Models",
+     "type": "multipleSelects",
+     "choiceCount": 5
+    },
+    {
+     "name": "Strengths",
+     "type": "multilineText"
+    },
+    {
+     "name": "Limits",
+     "type": "multilineText"
+    },
+    {
+     "name": "Best For",
+     "type": "multilineText"
+    },
+    {
+     "name": "Questions To Ask",
+     "type": "multilineText"
+    },
+    {
+     "name": "Source URL",
+     "type": "url"
+    },
+    {
+     "name": "Source Claim",
+     "type": "multilineText"
+    },
+    {
+     "name": "Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "Listed In Applications",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tbljNQySv3o1rK5ug"
+    },
+    {
+     "name": "Concepts",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblhvkRYAKJHVextV"
+    },
+    {
+     "name": "Practices",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tbl2mF7Xa2OeIWPx3"
+    },
+    {
+     "name": "Profile Applications",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tbljNQySv3o1rK5ug"
+    }
+   ]
+  },
+  {
+   "name": "Applications",
+   "id": "tbljNQySv3o1rK5ug",
+   "records": 22,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Name",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Summary",
+     "type": "multilineText"
+    },
+    {
+     "name": "Body",
+     "type": "multilineText"
+    },
+    {
+     "name": "Business Models",
+     "type": "multipleSelects",
+     "choiceCount": 5
+    },
+    {
+     "name": "Tags",
+     "type": "multilineText"
+    },
+    {
+     "name": "Related Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "Related Tools",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblVRHJIPiLDERGNT"
+    },
+    {
+     "name": "Tools Naming This Application",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblVRHJIPiLDERGNT"
+    }
+   ]
+  },
+  {
+   "name": "Concepts",
+   "id": "tblhvkRYAKJHVextV",
+   "records": 26,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Name",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Summary",
+     "type": "multilineText"
+    },
+    {
+     "name": "Body",
+     "type": "multilineText"
+    },
+    {
+     "name": "Business Models",
+     "type": "multipleSelects",
+     "choiceCount": 5
+    },
+    {
+     "name": "Tags",
+     "type": "multilineText"
+    },
+    {
+     "name": "Related Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "Related Tools",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblVRHJIPiLDERGNT"
+    },
+    {
+     "name": "Framework Step",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblTkMkybet5WTlLT"
+    }
+   ]
+  },
+  {
+   "name": "Practices",
+   "id": "tbl2mF7Xa2OeIWPx3",
+   "records": 14,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Name",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Summary",
+     "type": "multilineText"
+    },
+    {
+     "name": "Body",
+     "type": "multilineText"
+    },
+    {
+     "name": "Business Models",
+     "type": "multipleSelects",
+     "choiceCount": 5
+    },
+    {
+     "name": "Tags",
+     "type": "multilineText"
+    },
+    {
+     "name": "Related Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "Related Tools",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblVRHJIPiLDERGNT"
+    },
+    {
+     "name": "Framework Step",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblTkMkybet5WTlLT"
+    }
+   ]
+  },
+  {
+   "name": "Myths",
+   "id": "tblypLUnTRSiGAdUT",
+   "records": 8,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Claim",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Truth",
+     "type": "multilineText"
+    },
+    {
+     "name": "Detail",
+     "type": "multilineText"
+    }
+   ]
+  },
+  {
+   "name": "Audit Groups",
+   "id": "tblno5YvkAgq7wvuN",
+   "records": 15,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Label",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Layer",
+     "type": "singleSelect",
+     "choiceCount": 2
+    },
+    {
+     "name": "Question",
+     "type": "multilineText"
+    },
+    {
+     "name": "Situation",
+     "type": "singleSelect",
+     "choiceCount": 4
+    },
+    {
+     "name": "Audit Questions",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblAt93DXAIXk7QNT"
+    },
+    {
+     "name": "Framework Step",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblTkMkybet5WTlLT"
+    },
+    {
+     "name": "Introduction",
+     "type": "multilineText"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    },
+    {
+     "name": "Question Count",
+     "type": "number"
+    },
+    {
+     "name": "Max Score",
+     "type": "number"
+    },
+    {
+     "name": "Status",
+     "type": "singleSelect",
+     "choiceCount": 2
+    },
+    {
+     "name": "Program Pillar",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblsAAa52EpX8hgd3"
+    }
+   ]
+  },
+  {
+   "name": "Audit Score Bands",
+   "id": "tbl9UB8jGKkV8swy9",
+   "records": 5,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Label",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Min",
+     "type": "number"
+    },
+    {
+     "name": "Max",
+     "type": "number"
+    },
+    {
+     "name": "Bars",
+     "type": "number"
+    },
+    {
+     "name": "Blurb",
+     "type": "multilineText"
+    },
+    {
+     "name": "Total Possible",
+     "type": "number"
+    },
+    {
+     "name": "Legacy Range (48-point audit)",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Legacy Blurb",
+     "type": "multilineText"
+    }
+   ]
+  },
+  {
+   "name": "Audit Questions",
+   "id": "tblAt93DXAIXk7QNT",
+   "records": 64,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Question",
+     "type": "multilineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Group",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblno5YvkAgq7wvuN"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    },
+    {
+     "name": "Tag",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Example",
+     "type": "multilineText"
+    },
+    {
+     "name": "Example — E-commerce",
+     "type": "multilineText"
+    },
+    {
+     "name": "Example — B2B",
+     "type": "multilineText"
+    },
+    {
+     "name": "Example — SaaS",
+     "type": "multilineText"
+    },
+    {
+     "name": "Example — Media & subscriptions",
+     "type": "multilineText"
+    },
+    {
+     "name": "Example — Marketplace",
+     "type": "multilineText"
+    },
+    {
+     "name": "Recommended Action",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Guidance",
+     "type": "multilineText"
+    },
+    {
+     "name": "Framework Step",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblTkMkybet5WTlLT"
+    },
+    {
+     "name": "Max Score",
+     "type": "number"
+    },
+    {
+     "name": "Status",
+     "type": "singleSelect",
+     "choiceCount": 2
+    },
+    {
+     "name": "Program Pillar",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblsAAa52EpX8hgd3"
+    }
+   ]
+  },
+  {
+   "name": "Plays",
+   "id": "tblSExuX57VMkTeEX",
+   "records": 22,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Play",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Default priority",
+     "type": "number"
+    },
+    {
+     "name": "What it looks like",
+     "type": "multilineText"
+    },
+    {
+     "name": "Trigger",
+     "type": "multilineText"
+    },
+    {
+     "name": "Prerequisites",
+     "type": "multilineText"
+    },
+    {
+     "name": "Related Opportunities",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblc9Gd2YI8wVHiVc"
+    },
+    {
+     "name": "Activity type",
+     "type": "singleSelect",
+     "choiceCount": 7
+    },
+    {
+     "name": "When to use",
+     "type": "multilineText"
+    },
+    {
+     "name": "Lever",
+     "type": "multipleSelects",
+     "choiceCount": 8
+    },
+    {
+     "name": "Change type",
+     "type": "singleSelect",
+     "choiceCount": 6
+    },
+    {
+     "name": "Measurement setup",
+     "type": "singleSelect",
+     "choiceCount": 5
+    },
+    {
+     "name": "Algorithm",
+     "type": "multipleSelects",
+     "choiceCount": 12
+    }
+   ]
+  },
+  {
+   "name": "Framework Steps",
+   "id": "tblTkMkybet5WTlLT",
+   "records": 6,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Name",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    },
+    {
+     "name": "Question",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Summary",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Description",
+     "type": "multilineText"
+    },
+    {
+     "name": "Use Case Card",
+     "type": "multilineText"
+    },
+    {
+     "name": "Opportunity Fields",
+     "type": "multilineText"
+    },
+    {
+     "name": "Concepts",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblhvkRYAKJHVextV"
+    },
+    {
+     "name": "Practices",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tbl2mF7Xa2OeIWPx3"
+    },
+    {
+     "name": "Audit Groups",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblno5YvkAgq7wvuN"
+    },
+    {
+     "name": "Audit Max Score",
+     "type": "number"
+    },
+    {
+     "name": "Status",
+     "type": "singleSelect",
+     "choiceCount": 2
+    },
+    {
+     "name": "Legacy Notes",
+     "type": "multilineText"
+    },
+    {
+     "name": "Audit Questions",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblAt93DXAIXk7QNT"
+    },
+    {
+     "name": "Taxonomy",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblG3IOvdhtNuCM5x"
+    }
+   ]
+  },
+  {
+   "name": "Audit Answer Levels",
+   "id": "tbl7MbGzAKw4aVpV1",
+   "records": 3,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Label",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Points",
+     "type": "number"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    }
+   ]
+  },
+  {
+   "name": "Taxonomy",
+   "id": "tblG3IOvdhtNuCM5x",
+   "records": 21,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Label",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Type",
+     "type": "singleSelect",
+     "choiceCount": 5
+    },
+    {
+     "name": "Blurb",
+     "type": "multilineText"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    },
+    {
+     "name": "Select Option",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Framework Step",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblTkMkybet5WTlLT"
+    }
+   ]
+  },
+  {
+   "name": "Program Pillars",
+   "id": "tblsAAa52EpX8hgd3",
+   "records": 4,
+   "viewCount": 1,
+   "fields": [
+    {
+     "name": "Name",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Slug",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Order",
+     "type": "number"
+    },
+    {
+     "name": "Question",
+     "type": "singleLineText"
+    },
+    {
+     "name": "Description",
+     "type": "multilineText"
+    },
+    {
+     "name": "Audit Max Score",
+     "type": "number"
+    },
+    {
+     "name": "Status",
+     "type": "singleSelect",
+     "choiceCount": 2
+    },
+    {
+     "name": "Audit Groups",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblno5YvkAgq7wvuN"
+    },
+    {
+     "name": "Audit Questions",
+     "type": "multipleRecordLinks",
+     "linkedTable": "tblAt93DXAIXk7QNT"
+    }
+   ]
+  }
+ ]
+}

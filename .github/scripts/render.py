@@ -148,29 +148,51 @@ def opp_fields(o, data, order, tool_item_ids):
     return f
 
 
-def hub_jsonld(data):
-    """WebSite + Organization + CollectionPage with ItemLists of every
-    opportunity and tool, for the /personalization-hub landing page."""
+# The hub's own pages, one per section, like the Research hub.
+PAGES = {
+    "home": (HUB, "Personalization Hub",
+             "A practical place to find where a different customer experience would help, "
+             "check that it deserves to ship, and choose the tools that can deliver it."),
+    "assess": ("/personalization-assessment", "Personalization maturity assessment",
+               "Score your personalization program across strategy and culture, people and skills, "
+               "data and tools, and process and methodology, with a practical next step for each pillar."),
+    "opportunities": ("/personalization-opportunities", "Personalization opportunities",
+                      "Customer situations to personalize, each worked through from signal to need, "
+                      "value, response and an A/B test."),
+    "tools": ("/personalization-tools", "Personalization tools",
+              "Personalization tools compared by stack role and business model: strengths, limits "
+              "and questions to ask before you buy more of it."),
+}
+
+
+def hub_jsonld(data, page="home"):
+    """WebSite + Organization + the page (CollectionPage, or WebPage for the
+    assessment) with ItemLists of what it lists, and a BreadcrumbList.
+    One per hub page; webflow_sync.py writes all four on every run."""
     def items(rows, base, name_key):
         return [{"@type": "ListItem", "position": i + 1, "url": SITE + base + r["id"], "name": r[name_key]}
                 for i, r in enumerate(rows)]
+    opp_list = {"@type": "ItemList", "name": "Personalization opportunities", "numberOfItems": len(data["opportunities"]),
+                "itemListElement": items(data["opportunities"], OPP_BASE, "title")}
+    tool_list = {"@type": "ItemList", "name": "Personalization tools", "numberOfItems": len(data["tools"]),
+                 "itemListElement": items(data["tools"], TOOL_BASE, "name")}
+    path, name, desc = PAGES[page]
+    node = {"@type": "WebPage" if page == "assess" else "CollectionPage", "@id": SITE + path, "url": SITE + path,
+            "name": name, "description": desc,
+            "isPartOf": {"@id": SITE + "/#website"}, "publisher": {"@id": SITE + "/#organization"}}
+    parts = {"home": [opp_list, tool_list], "opportunities": [opp_list], "tools": [tool_list]}.get(page)
+    if parts:
+        node["hasPart" if len(parts) > 1 else "mainEntity"] = parts if len(parts) > 1 else parts[0]
+    crumbs = [("Home", SITE), (PAGES["home"][1], SITE + HUB)]
+    if page != "home":
+        crumbs.append((name, SITE + path))
     return {
         "@context": "https://schema.org",
         "@graph": [
             {"@type": "Organization", "@id": SITE + "/#organization", "name": "Speero", "url": SITE},
             {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE, "name": "Speero", "publisher": {"@id": SITE + "/#organization"}},
-            {"@type": "CollectionPage", "@id": SITE + HUB, "url": SITE + HUB,
-             "name": "Personalization Hub",
-             "description": "A practical place to find where a different customer experience would help, check that it deserves to ship, and choose the tools that can deliver it.",
-             "isPartOf": {"@id": SITE + "/#website"}, "publisher": {"@id": SITE + "/#organization"},
-             "hasPart": [
-                 {"@type": "ItemList", "name": "Personalization opportunities", "numberOfItems": len(data["opportunities"]),
-                  "itemListElement": items(data["opportunities"], OPP_BASE, "title")},
-                 {"@type": "ItemList", "name": "Personalization tools", "numberOfItems": len(data["tools"]),
-                  "itemListElement": items(data["tools"], TOOL_BASE, "name")},
-             ]},
+            node,
             {"@type": "BreadcrumbList", "itemListElement": [
-                {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
-                {"@type": "ListItem", "position": 2, "name": "Personalization Hub", "item": SITE + HUB}]},
+                {"@type": "ListItem", "position": i + 1, "name": n, "item": u} for i, (n, u) in enumerate(crumbs)]},
         ],
     }

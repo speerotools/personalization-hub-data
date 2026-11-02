@@ -29,7 +29,7 @@ Environment variables:
   WEBFLOW_SITE_ID                    default: 5fbb892601063dd93dd166d7
   WEBFLOW_TOOLS_COLLECTION           default: 6ae871c2e332aa28943ce453
   WEBFLOW_OPPORTUNITIES_COLLECTION   default: 6ae871c32b8db33bd1a3cf84
-  WEBFLOW_HUB_PAGE                   default: 6ae872418849eb32398047d1
+  WEBFLOW_HUB_PAGES                  default: the four hub pages, as key=pageId,...
   DATA_FILE                          default: personalization-hub.json
   ASSET_BASE                         default: the jsDelivr URL of this repo
   WEBFLOW_PUBLISH                    default: "false"
@@ -59,7 +59,10 @@ TOKEN = os.environ.get("WEBFLOW_TOKEN")
 SITE_ID = os.environ.get("WEBFLOW_SITE_ID", "5fbb892601063dd93dd166d7")
 TOOLS_COLLECTION = os.environ.get("WEBFLOW_TOOLS_COLLECTION") or "6ae871c2e332aa28943ce453"
 OPPS_COLLECTION = os.environ.get("WEBFLOW_OPPORTUNITIES_COLLECTION") or "6ae871c32b8db33bd1a3cf84"
-HUB_PAGE = os.environ.get("WEBFLOW_HUB_PAGE") or "6ae872418849eb32398047d1"
+# Hub page ids by section; each gets its own JSON-LD every run.
+HUB_PAGES = dict(kv.split("=") for kv in (os.environ.get("WEBFLOW_HUB_PAGES") or
+    "home=6ae872418849eb32398047d1,assess=6ae88a25a7d72d7d95fabf58,"
+    "opportunities=6ae88a2699cf5a2476b52e00,tools=6ae88a2715066e495041629e").split(","))
 DATA_FILE = os.environ.get("DATA_FILE", "personalization-hub.json")
 ASSET_BASE = os.environ.get("ASSET_BASE", "https://cdn.jsdelivr.net/gh/speerotools/personalization-hub-data@main/")
 PUBLISH = os.environ.get("WEBFLOW_PUBLISH", "false").lower() == "true"
@@ -219,8 +222,9 @@ def main() -> None:
     if not DRY_RUN:
         try:
             req("PATCH", f"{API}/sites/{SITE_ID}/pages/schema_markup",
-                {"pages": [{"id": HUB_PAGE, "jsonLdSchema": json.dumps(render.hub_jsonld(data), ensure_ascii=False)}]})
-            print("  landing page schema refreshed")
+                {"pages": [{"id": pid, "jsonLdSchema": json.dumps(render.hub_jsonld(data, key), ensure_ascii=False)}
+                           for key, pid in HUB_PAGES.items()]})
+            print(f"  schema refreshed on {len(HUB_PAGES)} hub pages")
         except Exception as e:  # schema is worth retrying, not worth failing over
             print(f"  WARN landing schema update failed: {e}", file=sys.stderr)
 

@@ -169,5 +169,8 @@ def hub_jsonld(data):
                  {"@type": "ItemList", "name": "Personalization tools", "numberOfItems": len(data["tools"]),
                   "itemListElement": items(data["tools"], TOOL_BASE, "name")},
              ]},
+            {"@type": "BreadcrumbList", "itemListElement": [
+                {"@type": "ListItem", "position": 1, "name": "Home", "item": SITE},
+                {"@type": "ListItem", "position": 2, "name": "Personalization Hub", "item": SITE + HUB}]},
         ],
     }

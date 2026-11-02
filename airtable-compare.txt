@@ -1,8 +1,14 @@
 Airtable vs prototype
   opportunities: 41 in Airtable, 41 in the prototype
     'signals' differs on 41: browse-left, browse-proof, buyer-role, campaign-source, cancel-path, cart-complement, cart-left, checkout-doubt ...
+      browse-left: 1 items vs 1; types ['inferred'] vs ['inferred']; texts differ; raw is str, 1 lines, starts '[Aaaaaaaa] Aaaaaa aaaaa aa aaa aaaaaaa a'
+      browse-proof: 1 items vs 1; types ['connected'] vs ['connected']; texts differ; raw is str, 1 lines, starts '[Aaaaaaaaa] Aaaaaaaa aa AAA aaaaa, aa aa'
+      buyer-role: 2 items vs 2; types ['connected', 'connected'] vs ['connected', 'inferred']; texts differ; raw is str, 2 lines, starts '[Aaaaaaaaa] Aaaaa aaaaaaa aaaaa aaaa AAA'
   tools: 36 in Airtable, 36 in the prototype
     'strengths' differs on 3: convert, klaviyo, limespot
+      convert: 3 items vs 3; items differing at 2; raw is str, 3 lines, starts 'Aaaaaaaaaaaaaaa aaaa aa aaa aaaa aaaaaaa'
+      klaviyo: 3 items vs 3; items differing at 2; raw is str, 3 lines, starts 'Aaaaaa a aaaaaaaa, 999-aaaaaa aaaaaaa aa'
+      limespot: 3 items vs 3; items differing at 2; raw is str, 3 lines, starts 'Aaaaaa aaaaaaaaa, aaaaaaa, AAAa, aa aaa '
   library: 62 in Airtable, 62 in the prototype
   myths: 8 in Airtable, 8 in the prototype
   steps: 5 in Airtable, 5 in the prototype

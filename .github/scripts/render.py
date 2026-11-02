@@ -30,6 +30,15 @@ def clip(s, n):
     return s if len(s) <= n else s[: n - 1].rsplit(" ", 1)[0] + "…"
 
 
+def meta_title(name, suffix, limit=70):
+    """Drop the suffix, then the brand, before cutting the name itself:
+    a title clipped mid-phrase reads worse in results than a shorter one."""
+    for tail in (suffix, " | Speero", ""):
+        if len(name + tail) <= limit:
+            return name + tail
+    return clip(name, limit)
+
+
 def content_hash(fields):
     return hashlib.sha1(json.dumps(fields, sort_keys=True).encode()).hexdigest()[:16]
 
@@ -59,7 +68,7 @@ def tool_fields(t, data, order, logo_url=None):
         "vendor-claim": (t.get("source") or {}).get("claim", ""),
         "source-url": (t.get("source") or {}).get("url", ""),
         "connected-applications": "".join(apps),
-        "meta-title": clip(f"{t['name']} for personalization: strengths and limits | Speero", 70),
+        "meta-title": meta_title(t["name"], " for personalization: strengths and limits | Speero"),
         "meta-description": clip(t["summary"], 155),
         "page-url": f"{TOOL_BASE}{t['id']}",
         "sort-order": order,
@@ -119,7 +128,7 @@ def opp_fields(o, data, order, tool_item_ids):
         "the-moment": moment,
         "related-situations": related,
         "tools": [tool_item_ids[i] for i in o["toolIds"] if i in tool_item_ids],
-        "meta-title": clip(f"{o['title'].rstrip('.')} | Personalization use case | Speero", 70),
+        "meta-title": meta_title(o["title"].rstrip("."), " | Personalization use case | Speero"),
         "meta-description": clip(f"{o['summary']} {o['whatsGoingOn']}", 155),
         "page-url": f"{OPP_BASE}{o['id']}",
         "sort-order": order,

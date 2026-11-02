@@ -33,8 +33,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      # Commits table and field names, types and counts only: the repo is
-      # public. Choice values and view names are in this step's log.
+      # Table and field names, types and counts only, in the file and in the
+      # log: this repo and its Actions logs are public.
       - name: Record the Airtable schema
         if: ${{ inputs.schema_only }}
         env:

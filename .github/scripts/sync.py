@@ -58,20 +58,21 @@ def count_records(table_id: str) -> int:
 
 
 def print_schema() -> None:
-    """Writes the base's structure to airtable-schema.json: table and field
-    names, types, how many choices a select has, and record counts. This repo
-    is public, so choice values and view names go to the job log only, which
-    needs repo access to read."""
+    """Writes the base's structure to airtable-schema.json and the log: table
+    and field names, types, how many choices a select has, and record counts.
+    This repo and its Actions logs are public, so choice values, view names
+    and record content are never printed or written. Run it locally if you
+    need those."""
     tables = api(f"meta/bases/{BASE}/tables")["tables"]
     out = []
     for t in tables:
         n = count_records(t["id"])
-        print(f"\n{t['name']}  ({t['id']}, {n} records)  views: {', '.join(v['name'] for v in t.get('views', []))}")
+        print(f"\n{t['name']}  ({t['id']}, {n} records, {len(t.get('views', []))} views)")
         fields = []
         for f in t["fields"]:
             opts = f.get("options") or {}
             choices = [c["name"] for c in opts.get("choices", [])]
-            print(f"   {f['name']:<40} {f['type']}" + (f"  [{', '.join(choices)}]" if choices else ""))
+            print(f"   {f['name']:<40} {f['type']}" + (f"  ({len(choices)} choices)" if choices else ""))
             fields.append({k: v for k, v in {
                 "name": f["name"], "type": f["type"],
                 "choiceCount": len(choices) or None,

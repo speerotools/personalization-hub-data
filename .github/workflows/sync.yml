@@ -1,0 +1,61 @@
+name: Sync Airtable to hub
+
+on:
+  schedule:
+    - cron: '15 5 * * *'     # 05:15 UTC daily, after the research hub sync
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Plan only: print what would change in Webflow, write nothing'
+        type: boolean
+        default: false
+      allow_slug_change:
+        description: 'Permit slug changes (add the 301 in Webflow first)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: personalization-hub-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # commits personalization-hub.json back to the repo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Fails the run on any broken reference (unknown tool, stage, related
+      # situation). Nothing is written when it does.
+      - name: Build personalization-hub.json
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_MAPPED: ${{ vars.AIRTABLE_MAPPED }}
+        run: python .github/scripts/sync.py
+
+      - name: Commit and push
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name  "speero-sync-bot"
+          git config user.email "sync@speero.com"
+          git add personalization-hub.json
+          if git diff --cached --quiet; then
+            echo "No data changes - skipping commit"
+          else
+            git commit -m "Sync from Airtable [$(date -u +%Y-%m-%dT%H:%M:%SZ)]"
+            git push
+          fi
+
+      - name: Sync Webflow CMS and purge CDN
+        env:
+          WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
+          WEBFLOW_PUBLISH: ${{ vars.WEBFLOW_PUBLISH }}
+          WEBFLOW_SITE_PUBLISH: ${{ vars.WEBFLOW_SITE_PUBLISH }}
+          WEBFLOW_CUSTOM_DOMAINS: ${{ vars.WEBFLOW_CUSTOM_DOMAINS }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          ALLOW_SLUG_CHANGE: ${{ inputs.allow_slug_change }}
+        run: python .github/scripts/webflow_sync.py

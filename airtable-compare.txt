@@ -1,0 +1,19 @@
+Airtable vs prototype
+  opportunities: 41 in Airtable, 41 in the prototype
+    'signals' differs on 41: browse-left, browse-proof, buyer-role, campaign-source, cancel-path, cart-complement, cart-left, checkout-doubt ...
+  tools: 36 in Airtable, 36 in the prototype
+    'strengths' differs on 3: convert, klaviyo, limespot
+  library: 62 in Airtable, 62 in the prototype
+  myths: 8 in Airtable, 8 in the prototype
+  steps: 5 in Airtable, 5 in the prototype
+  pillars: 4 in Airtable, 4 in the prototype
+  levels: 5 in Airtable, 5 in the prototype
+  questions: 20 in Airtable, 20 in the prototype
+  taxonomy.models: 5 in Airtable, 5 in the prototype
+  taxonomy.needs: 4 in Airtable, 4 in the prototype
+  taxonomy.stages: 6 in Airtable, 6 in the prototype
+  taxonomy.intents: 3 in Airtable, 3 in the prototype
+  taxonomy.signals: 3 in Airtable, 3 in the prototype
+  taxonomy.answers: 3 in Airtable, 3 in the prototype
+
+Airtable data passes validation.

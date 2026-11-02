@@ -45,7 +45,7 @@ The rich text fields carry their own H3s, so the template only binds one field p
 |---|---|---|
 | Secret | `WEBFLOW_TOKEN` | Site token with CMS read/write, pages and publish. The research hub's token works |
 | Secret | `AIRTABLE_TOKEN` | PAT with `data.records:read` + `schema.bases:read` on `appulGzKcE8TQIO70` |
-| Variable | `AIRTABLE_MAPPED` | `true` once `read_airtable()` is implemented |
+| Variable | `AIRTABLE_MAPPED` | `true` publishes the Airtable data instead of the prototype dataset |
 | Variable | `WEBFLOW_PUBLISH` | `true` publishes the CMS items each run changed. Leave off until the templates are designed |
 | Variable | `WEBFLOW_SITE_PUBLISH` | `true` also publishes the whole site, including unfinished Designer work |
 | Variable | `WEBFLOW_CUSTOM_DOMAINS` | Required with site publish, same ids as the research hub |

@@ -13,7 +13,7 @@ https://cdn.jsdelivr.net/gh/speerotools/personalization-hub-data@main/personaliz
 1. `sync.py` reads Airtable and writes `personalization-hub.json`. While `AIRTABLE_MAPPED` is not `true` it logs the Airtable comparison and writes the prototype dataset instead.
 2. `build.validate()` checks every reference (tools, stages, needs, signals, related situations, library entries, slugs) and fails the run on a broken one, whichever source the data came from.
 3. The JSON is committed, so every change to live data has a diff.
-4. `webflow_sync.py` reconciles the CMS collections, refreshes the landing page JSON-LD and purges the CDN.
+4. `webflow_sync.py` reconciles the CMS collections, refreshes the JSON-LD on the four hub pages and purges the CDN. The JSON-LD goes through Webflow's beta schema markup endpoint; if it is not stored, the run finishes its other steps and then fails.
 
 ## Scripts
 
@@ -43,7 +43,7 @@ The rich text fields carry their own H3s, so the template only binds one field p
 
 | Kind | Name | Value |
 |---|---|---|
-| Secret | `WEBFLOW_TOKEN` | Site token with CMS read/write, pages and publish. The research hub's token works |
+| Secret | `WEBFLOW_TOKEN` | Site token with CMS read/write, pages read/write (`pages:write` covers the JSON-LD) and publish. The research hub's token works |
 | Secret | `AIRTABLE_TOKEN` | PAT with `data.records:read` + `schema.bases:read` on `appulGzKcE8TQIO70` |
 | Variable | `AIRTABLE_MAPPED` | `true` publishes the Airtable data instead of the prototype dataset |
 | Variable | `WEBFLOW_PUBLISH` | `true` publishes the CMS items each run changed. Leave off until the templates are designed |

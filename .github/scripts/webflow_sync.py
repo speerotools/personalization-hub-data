@@ -54,6 +54,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 import render  # noqa: E402
 
 API = "https://api.webflow.com/v2"
+# Page schema markup is only on the beta API (PATCH /beta/sites/{id}/pages/schema-markup).
+BETA_API = "https://api.webflow.com/beta"
 
 TOKEN = os.environ.get("WEBFLOW_TOKEN")
 SITE_ID = os.environ.get("WEBFLOW_SITE_ID", "5fbb892601063dd93dd166d7")
@@ -201,6 +203,18 @@ def reconcile(label: str, collection: str, desired: dict[str, dict]) -> dict[str
     return id_map
 
 
+def write_hub_schema(data: dict) -> None:
+    """Write each hub page's JSON-LD, then check Webflow stored it for every page."""
+    res = req("PATCH", f"{BETA_API}/sites/{SITE_ID}/pages/schema-markup",
+              {"pages": [{"id": pid, "jsonLdSchema": json.dumps(render.hub_jsonld(data, key), ensure_ascii=False)}
+                         for key, pid in HUB_PAGES.items()]})
+    stored = {p.get("id") for p in res.get("pages", []) if p.get("jsonLdSchema")}
+    missing = [key for key, pid in HUB_PAGES.items() if pid not in stored]
+    if missing:
+        raise RuntimeError(f"no schema stored for: {', '.join(missing)}")
+    print(f"  schema refreshed on {len(HUB_PAGES)} hub pages")
+
+
 def main() -> None:
     if not TOKEN and not DRY_RUN:
         print("ERROR: WEBFLOW_TOKEN env var required (or DRY_RUN=true)", file=sys.stderr)
@@ -219,14 +233,13 @@ def main() -> None:
             for pos, o in enumerate(data["opportunities"], 1)}
     reconcile("Personalization Opportunities", OPPS_COLLECTION, opps)
 
+    schema_failed = False
     if not DRY_RUN:
         try:
-            req("PATCH", f"{API}/sites/{SITE_ID}/pages/schema_markup",
-                {"pages": [{"id": pid, "jsonLdSchema": json.dumps(render.hub_jsonld(data, key), ensure_ascii=False)}
-                           for key, pid in HUB_PAGES.items()]})
-            print(f"  schema refreshed on {len(HUB_PAGES)} hub pages")
-        except Exception as e:  # schema is worth retrying, not worth failing over
-            print(f"  WARN landing schema update failed: {e}", file=sys.stderr)
+            write_hub_schema(data)
+        except Exception as e:  # finish the run, then fail it so the miss is seen
+            print(f"ERROR hub page schema update failed: {e}", file=sys.stderr)
+            schema_failed = True
 
     if SITE_PUBLISH and not DRY_RUN and sum(CHANGED):
         body = {"customDomains": CUSTOM_DOMAINS} if CUSTOM_DOMAINS else {"publishToWebflowSubdomain": True}
@@ -239,6 +252,8 @@ def main() -> None:
                 urllib.request.urlopen(u, timeout=30).read()
             except Exception as e:
                 print(f"  WARN purge failed for {u}: {e}", file=sys.stderr)
+    if schema_failed:
+        sys.exit(1)
     print("\nDone.")
 
 

@@ -10,8 +10,9 @@ whichever source it came from.
 
     python3 .github/scripts/build.py
 """
-import json, os, sys
+import json, os, re, sys
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "personalization-hub.json")
@@ -69,12 +70,33 @@ def prototype_data():
     }
 
 
+SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+
 def validate(data):
-    """Referential checks: a broken id should stop the build, not ship a dead link."""
+    """Referential checks: a broken id should stop the build, not ship a dead link.
+
+    Ids end up in URLs and href attributes on speero.com, and source URLs in
+    links, so both are held to a strict shape: slugs are lowercase words and
+    hyphens, source URLs are absolute http(s). Anything else fails the run."""
     opps, tools, library = data["opportunities"], data["tools"], data["library"]
     ids = {"opp": {o["id"] for o in opps}, "tool": {t["id"] for t in tools}, "lib": {l["id"] for l in library}}
     tax = {k: {x["id"] for x in v} for k, v in data["taxonomy"].items() if k not in ("arms", "answers")}
     errors = []
+    id_rows = [("opportunity", opps), ("tool", tools), ("library entry", library), ("myth", data["myths"]),
+               ("step", data["steps"]), ("pillar", data["pillars"]), ("level", data["levels"]),
+               ("question", [q for p in data["pillars"] for q in p["items"]])]
+    id_rows += [(f"taxonomy {k}", v) for k, v in data["taxonomy"].items() if k != "arms"]
+    for kind, rows in id_rows:
+        for r in rows:
+            if r.get("id") and not SLUG.match(str(r["id"])):
+                errors.append(f"{kind} slug is not lowercase words and hyphens (record {r.get('rid') or 'unknown'})")
+    for t in tools:
+        url = (t.get("source") or {}).get("url")
+        if url:
+            u = urlparse(url)
+            if u.scheme not in ("http", "https") or not u.netloc:
+                errors.append(f"tool {t['id']}: Source URL is not an absolute http(s) link")
     for kind, rows in (("opportunity", opps), ("tool", tools), ("library entry", library)):
         seen = set()
         for r in rows:

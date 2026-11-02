@@ -15,6 +15,7 @@ TOOL_BASE = "/personalization-tools/"
 FORMATS = ["Content", "Experience", "Sequence", "Recommendations"]
 
 e = lambda s: html.escape(str(s or ""), quote=False)
+attr = lambda s: html.escape(str(s or ""), quote=True)  # attribute values
 
 
 def labels(data):
@@ -53,7 +54,7 @@ def tool_fields(t, data, order, logo_url=None):
         if not l:
             continue
         op = opps.get((l["relatedOpportunityIds"] or [None])[0])
-        link = f'<p><a href="{OPP_BASE}{op["id"]}">{e(op["title"])}</a></p>' if op else ""
+        link = f'<p><a href="{attr(OPP_BASE + op["id"])}">{e(op["title"])}</a></p>' if op else ""
         apps.append(f"<h3>{e(l['name'])}</h3><p>{e(l['summary'])}</p>{link}")
     f = {
         "name": t["name"],
@@ -110,7 +111,7 @@ def opp_fields(o, data, order, tool_item_ids):
     moment += "<p><strong>Win or lose,</strong> record what worked, for whom and why. What you learn becomes the next signal.</p>"
 
     related = "".join(
-        f'<p><a href="{OPP_BASE}{r}">{e(opps[r]["title"])}</a> {e(opps[r]["summary"])}</p>'
+        f'<p><a href="{attr(OPP_BASE + r)}">{e(opps[r]["title"])}</a> {e(opps[r]["summary"])}</p>'
         for r in o["related"][:3] if r in opps)
 
     stage, need_l = L["stages"].get(o["stage"], ""), L["needs"].get(o["situation"], "")

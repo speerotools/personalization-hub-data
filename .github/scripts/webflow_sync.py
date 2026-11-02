@@ -150,7 +150,12 @@ def reconcile(label: str, collection: str, desired: dict[str, dict]) -> dict[str
             continue
         to_update.append({"id": item["id"], "fieldData": fd})
 
+    # An item matched this run (by id or by slug) is never archived, even if
+    # its stored airtable-id is an older key, such as the slug it carried
+    # before the Airtable record ids arrived. The update relabels it instead.
+    matched = set(id_map.values())
     to_archive = [i for i in existing if (i.get("fieldData") or {}).get("airtable-id")
+                  and i["id"] not in matched
                   and i["fieldData"]["airtable-id"] not in desired and not i.get("isArchived")]
 
     if renames and not ALLOW_SLUG_CHANGE:

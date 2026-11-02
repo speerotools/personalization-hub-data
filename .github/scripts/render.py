@@ -110,6 +110,15 @@ def opp_fields(o, data, order, tool_item_ids):
         moment += f"<p>{e(t['audienceReadout'])}</p>"
     moment += "<p><strong>Win or lose,</strong> record what worked, for whom and why. What you learn becomes the next signal.</p>"
 
+    # The template shows this rather than a Collection List on the Tools
+    # reference: a list filtered to the current item's references cannot be
+    # set up or verified through the API, and an unfiltered one would show
+    # every tool on every page.
+    tools = {t["id"]: t for t in data["tools"]}
+    tools_list = ("<ul>" + "".join(
+        f'<li><a href="{attr(TOOL_BASE + i)}">{e(tools[i]["name"])}</a> {e(tools[i]["summary"])}</li>'
+        for i in o["toolIds"] if i in tools) + "</ul>") if o["toolIds"] else ""
+
     related = "".join(
         f'<p><a href="{attr(OPP_BASE + r)}">{e(opps[r]["title"])}</a> {e(opps[r]["summary"])}</p>'
         for r in o["related"][:3] if r in opps)
@@ -128,6 +137,7 @@ def opp_fields(o, data, order, tool_item_ids):
         "the-response": response,
         "the-moment": moment,
         "related-situations": related,
+        "tools-list": tools_list,
         "tools": [tool_item_ids[i] for i in o["toolIds"] if i in tool_item_ids],
         "meta-title": meta_title(o["title"].rstrip("."), " | Personalization use case | Speero"),
         "meta-description": clip(f"{o['summary']} {o['whatsGoingOn']}", 155),

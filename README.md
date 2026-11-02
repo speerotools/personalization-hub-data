@@ -35,7 +35,7 @@ Site `5fbb892601063dd93dd166d7`.
 | Personalization Opportunities collection | `6ae871c32b8db33bd1a3cf84` | `/personalization-opportunities/<slug>` |
 | Landing page (draft) | `6ae872418849eb32398047d1` | `/personalization-hub` |
 
-Opportunity fields follow the five steps: `signals`, `the-need`, `worth-it`, `the-response`, `the-moment`, plus `related-situations` and a `tools` multi-reference. Tool fields: `stack-role`, `summary`, `best-for`, `strengths`, `limits`, `questions`, `business-models`, `vendor-claim`, `source-url`, `logo`, `connected-applications`. Both carry `meta-title`, `meta-description`, `page-url`, `sort-order`, `last-modified`, `airtable-id`, `content-hash`, the same conventions as the Research Recipes collection.
+Opportunity fields follow the five steps: `signals`, `the-need`, `worth-it`, `the-response`, `the-moment`, plus `related-situations`, `tools-list` (what the template shows) and a `tools` multi-reference (the relation). Tool fields: `stack-role`, `summary`, `best-for`, `strengths`, `limits`, `questions`, `business-models`, `vendor-claim`, `source-url`, `logo`, `connected-applications`. Both carry `meta-title`, `meta-description`, `page-url`, `sort-order`, `last-modified`, `airtable-id`, `content-hash`, the same conventions as the Research Recipes collection.
 
 The rich text fields carry their own H3s, so the template only binds one field per section under a static H2 (the step question).
 

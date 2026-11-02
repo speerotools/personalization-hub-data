@@ -328,10 +328,13 @@ def read_airtable(tables: dict, problems: Problems) -> dict:
             "roadmap": proto["roadmap"]}
 
 
-def compare(at: dict, proto: dict) -> None:
-    """Logs how the Airtable read differs from the prototype dataset: counts,
-    slugs present on one side only, and for matching slugs the names of the
-    fields whose values differ. No values: the log is public."""
+def compare(at: dict, proto: dict) -> list[str]:
+    """How the Airtable read differs from the prototype dataset: counts, slugs
+    present on one side only, and for matching slugs the names of the fields
+    whose values differ. No values, because this goes to the public log and to
+    airtable-compare.txt."""
+    out = []
+    print = out.append  # noqa: A001  collect, then the caller prints and saves
     def rows(d):
         return {
             "opportunities": d["opportunities"], "tools": d["tools"], "library": d["library"],
@@ -360,6 +363,7 @@ def compare(at: dict, proto: dict) -> None:
         same_order = [r["id"] for r in a[k] if r["id"] in pi] == [r["id"] for r in p[k] if r["id"] in ai]
         if not same_order:
             print("    order differs")
+    return out
 
 
 def from_airtable():
@@ -380,12 +384,15 @@ def main() -> None:
         if not TOKEN:
             sys.exit("AIRTABLE_TOKEN is required for --check")
         data, problems = from_airtable()
-        compare(data, build.prototype_data())
+        report = compare(data, build.prototype_data())
+        report += [f"  problem: {m}" for m in problems]
         try:
             build.validate(data)
-            print("\nAirtable data passes validation." + (" Mapping problems above." if problems else ""))
+            report.append("\nAirtable data passes validation." + (" Mapping problems listed above." if problems else ""))
         except SystemExit:
-            print("\nAirtable data fails validation (above).")
+            report.append("\nAirtable data fails validation (see the run log).")
+        print("\n".join(report))
+        Path("airtable-compare.txt").write_text("\n".join(report).lstrip() + "\n")
         if "--check" in sys.argv:
             return
     if TOKEN and MAPPED:

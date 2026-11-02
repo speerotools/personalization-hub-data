@@ -28,8 +28,8 @@ jobs:
     permissions:
       contents: write        # commits personalization-hub.json back to the repo
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -60,7 +60,7 @@ jobs:
         run: |
           git config user.name  "speero-sync-bot"
           git config user.email "sync@speero.com"
-          git add personalization-hub.json
+          git add personalization-hub.json airtable-compare.txt 2>/dev/null || git add personalization-hub.json
           if git diff --cached --quiet; then
             echo "No data changes - skipping commit"
           else

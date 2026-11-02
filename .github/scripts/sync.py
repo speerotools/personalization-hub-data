@@ -47,10 +47,13 @@ def api(path: str) -> dict:
         return json.loads(resp.read().decode())
 
 
-def count_records(table_id: str) -> int:
+def count_records(table_id: str, primary_field_id: str) -> int:
+    # Fetch only the primary field: the smallest request Airtable accepts
+    # (an empty fields[] is a 422). The values are counted, never printed.
     n, offset = 0, None
     while True:
-        res = api(f"{BASE}/{table_id}?pageSize=100&fields%5B%5D=" + ("&offset=" + offset if offset else ""))
+        q = f"pageSize=100&returnFieldsByFieldId=true&fields%5B%5D={primary_field_id}"
+        res = api(f"{BASE}/{table_id}?{q}" + (f"&offset={offset}" if offset else ""))
         n += len(res.get("records", []))
         offset = res.get("offset")
         if not offset:
@@ -66,7 +69,7 @@ def print_schema() -> None:
     tables = api(f"meta/bases/{BASE}/tables")["tables"]
     out = []
     for t in tables:
-        n = count_records(t["id"])
+        n = count_records(t["id"], t["primaryFieldId"])
         print(f"\n{t['name']}  ({t['id']}, {n} records, {len(t.get('views', []))} views)")
         fields = []
         for f in t["fields"]:

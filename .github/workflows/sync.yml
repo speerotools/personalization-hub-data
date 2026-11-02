@@ -14,7 +14,7 @@ on:
         type: boolean
         default: false
       schema_only:
-        description: 'Only record the Airtable tables and fields in airtable-schema.json (no records, no Webflow)'
+        description: 'Only record the Airtable structure in airtable-schema.json (no records, no Webflow)'
         type: boolean
         default: false
 
@@ -33,8 +33,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      # Table and field names, types, choices and counts. No record content:
-      # the repo is public.
+      # Commits table and field names, types and counts only: the repo is
+      # public. Choice values and view names are in this step's log.
       - name: Record the Airtable schema
         if: ${{ inputs.schema_only }}
         env:

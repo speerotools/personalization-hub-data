@@ -58,25 +58,27 @@ def count_records(table_id: str) -> int:
 
 
 def print_schema() -> None:
-    """Prints the base's tables and fields and writes them to
-    airtable-schema.json. Names, types, option lists and record counts only:
-    no record content, because this repo is public."""
+    """Writes the base's structure to airtable-schema.json: table and field
+    names, types, how many choices a select has, and record counts. This repo
+    is public, so choice values and view names go to the job log only, which
+    needs repo access to read."""
     tables = api(f"meta/bases/{BASE}/tables")["tables"]
     out = []
     for t in tables:
         n = count_records(t["id"])
-        print(f"\n{t['name']}  ({t['id']}, {n} records)")
+        print(f"\n{t['name']}  ({t['id']}, {n} records)  views: {', '.join(v['name'] for v in t.get('views', []))}")
         fields = []
         for f in t["fields"]:
-            print(f"   {f['name']:<40} {f['type']}")
             opts = f.get("options") or {}
+            choices = [c["name"] for c in opts.get("choices", [])]
+            print(f"   {f['name']:<40} {f['type']}" + (f"  [{', '.join(choices)}]" if choices else ""))
             fields.append({k: v for k, v in {
                 "name": f["name"], "type": f["type"],
-                "choices": [c["name"] for c in opts.get("choices", [])] or None,
+                "choiceCount": len(choices) or None,
                 "linkedTable": opts.get("linkedTableId"),
             }.items() if v})
         out.append({"name": t["name"], "id": t["id"], "records": n,
-                    "views": [v["name"] for v in t.get("views", [])], "fields": fields})
+                    "viewCount": len(t.get("views", [])), "fields": fields})
     Path("airtable-schema.json").write_text(json.dumps({"base": BASE, "tables": out}, indent=1, ensure_ascii=False))
 
 

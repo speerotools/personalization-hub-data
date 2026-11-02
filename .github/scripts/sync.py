@@ -125,6 +125,13 @@ def lines(text):
     return out
 
 
+def shape(s, n=40):
+    """Letters to a/A, digits to 9, everything else kept: shows delimiters and
+    line structure without the words, for the public comparison."""
+    s = re.sub(r"[a-z]", "a", re.sub(r"[A-Z]", "A", re.sub(r"[0-9]", "9", str(s))))
+    return s[:n].replace("\n", "\\n")
+
+
 def text(f, name):
     return str(f.get(name) or "").strip()
 
@@ -231,6 +238,7 @@ def read_airtable(tables: dict, problems: Problems) -> dict:
         }
         if text(f, "Test Audience Readout"):
             o["test"]["audienceReadout"] = text(f, "Test Audience Readout")
+        o["_raw"] = {"signals": f.get("Signals")}
         opps.append(o)
 
     roles = list(proto["taxonomy"]["roles"])
@@ -258,6 +266,7 @@ def read_airtable(tables: dict, problems: Problems) -> dict:
             "source": {"url": text(f, "Source URL"), "claim": text(f, "Source Claim")} if text(f, "Source URL") else None,
         }
         t["logo"] = f"logos/{t['id']}.png" if t["id"] in have_logo else None
+        t["_raw"] = {"strengths": f.get("Strengths"), "limits": f.get("Limits"), "questions": f.get("Questions To Ask")}
         if not t["logo"]:
             # Not a blocker: the embed shows the tool's initial instead.
             print(f"  note: Tool {t['id']} has no logos/{t['id']}.png")
@@ -349,7 +358,7 @@ def compare(at: dict, proto: dict) -> list[str]:
         pi = {r["id"]: r for r in p[k]}
         diffs = {}
         for i in ai.keys() & pi.keys():
-            fields = sorted(x for x in (ai[i].keys() | pi[i].keys()) - {"rid", "items"}
+            fields = sorted(x for x in (ai[i].keys() | pi[i].keys()) - {"rid", "items", "_raw"}
                             if ai[i].get(x) != pi[i].get(x))
             for x in fields:
                 diffs.setdefault(x, []).append(i)
@@ -360,10 +369,30 @@ def compare(at: dict, proto: dict) -> list[str]:
             print(f"    only in the prototype: {', '.join(sorted(pi.keys() - ai.keys()))}")
         for x, ids in sorted(diffs.items()):
             print(f"    '{x}' differs on {len(ids)}: {', '.join(sorted(ids)[:8])}{' ...' if len(ids) > 8 else ''}")
+            for i in sorted(ids)[:3]:
+                av, pv = ai[i].get(x), pi[i].get(x)
+                if isinstance(av, list) and isinstance(pv, list):
+                    raw = (ai[i].get("_raw") or {}).get(x)
+                    note = f"{len(av)} items vs {len(pv)}"
+                    if x == "signals":
+                        note += f"; types {[s['kind'] for s in av]} vs {[s['kind'] for s in pv]}"
+                        note += f"; texts {'match' if [s['example'] for s in av] == [s['example'] for s in pv] else 'differ'}"
+                    elif len(av) == len(pv):
+                        note += "; items differing at " + ", ".join(str(k) for k, (u, v) in enumerate(zip(av, pv)) if u != v)
+                    if raw is not None:
+                        note += f"; raw is {type(raw).__name__}, {str(raw).count(chr(10)) + 1} lines, starts '{shape(raw)}'"
+                    print(f"      {i}: {note}")
         same_order = [r["id"] for r in a[k] if r["id"] in pi] == [r["id"] for r in p[k] if r["id"] in ai]
         if not same_order:
             print("    order differs")
     return out
+
+
+def strip_raw(data):
+    for k in ("opportunities", "tools"):
+        for r in data[k]:
+            r.pop("_raw", None)
+    return data
 
 
 def from_airtable():
@@ -385,6 +414,7 @@ def main() -> None:
             sys.exit("AIRTABLE_TOKEN is required for --check")
         data, problems = from_airtable()
         report = compare(data, build.prototype_data())
+        strip_raw(data)
         report += [f"  problem: {m}" for m in problems]
         try:
             build.validate(data)
@@ -397,6 +427,7 @@ def main() -> None:
             return
     if TOKEN and MAPPED:
         data, problems = from_airtable()
+        strip_raw(data)
         if problems:
             sys.exit("Airtable mapping problems above: nothing written.")
         build.validate(data)

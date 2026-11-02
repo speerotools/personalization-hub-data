@@ -13,6 +13,10 @@ on:
         description: 'Permit slug changes (add the 301 in Webflow first)'
         type: boolean
         default: false
+      schema_only:
+        description: 'Only record the Airtable tables and fields in airtable-schema.json (no records, no Webflow)'
+        type: boolean
+        default: false
 
 concurrency:
   group: personalization-hub-sync
@@ -29,16 +33,30 @@ jobs:
         with:
           python-version: '3.12'
 
+      # Table and field names, types, choices and counts. No record content:
+      # the repo is public.
+      - name: Record the Airtable schema
+        if: ${{ inputs.schema_only }}
+        env:
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+        run: |
+          python .github/scripts/sync.py --schema
+          git config user.name  "speero-sync-bot"
+          git config user.email "sync@speero.com"
+          git add airtable-schema.json
+          git diff --cached --quiet || { git commit -m "Record Airtable schema"; git push; }
+
       # Fails the run on any broken reference (unknown tool, stage, related
       # situation). Nothing is written when it does.
       - name: Build personalization-hub.json
+        if: ${{ !inputs.schema_only }}
         env:
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
           AIRTABLE_MAPPED: ${{ vars.AIRTABLE_MAPPED }}
         run: python .github/scripts/sync.py
 
       - name: Commit and push
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && !inputs.schema_only }}
         run: |
           git config user.name  "speero-sync-bot"
           git config user.email "sync@speero.com"
@@ -51,6 +69,7 @@ jobs:
           fi
 
       - name: Sync Webflow CMS and purge CDN
+        if: ${{ !inputs.schema_only }}
         env:
           WEBFLOW_TOKEN: ${{ secrets.WEBFLOW_TOKEN }}
           WEBFLOW_PUBLISH: ${{ vars.WEBFLOW_PUBLISH }}

@@ -47,11 +47,37 @@ def api(path: str) -> dict:
         return json.loads(resp.read().decode())
 
 
+def count_records(table_id: str) -> int:
+    n, offset = 0, None
+    while True:
+        res = api(f"{BASE}/{table_id}?pageSize=100&fields%5B%5D=" + ("&offset=" + offset if offset else ""))
+        n += len(res.get("records", []))
+        offset = res.get("offset")
+        if not offset:
+            return n
+
+
 def print_schema() -> None:
-    for t in api(f"meta/bases/{BASE}/tables")["tables"]:
-        print(f"\n{t['name']}  ({t['id']})")
+    """Prints the base's tables and fields and writes them to
+    airtable-schema.json. Names, types, option lists and record counts only:
+    no record content, because this repo is public."""
+    tables = api(f"meta/bases/{BASE}/tables")["tables"]
+    out = []
+    for t in tables:
+        n = count_records(t["id"])
+        print(f"\n{t['name']}  ({t['id']}, {n} records)")
+        fields = []
         for f in t["fields"]:
             print(f"   {f['name']:<40} {f['type']}")
+            opts = f.get("options") or {}
+            fields.append({k: v for k, v in {
+                "name": f["name"], "type": f["type"],
+                "choices": [c["name"] for c in opts.get("choices", [])] or None,
+                "linkedTable": opts.get("linkedTableId"),
+            }.items() if v})
+        out.append({"name": t["name"], "id": t["id"], "records": n,
+                    "views": [v["name"] for v in t.get("views", [])], "fields": fields})
+    Path("airtable-schema.json").write_text(json.dumps({"base": BASE, "tables": out}, indent=1, ensure_ascii=False))
 
 
 def read_airtable() -> dict:

@@ -133,8 +133,52 @@ def validate(data):
         sys.exit(1)
 
 
+# Speero's house style has no em dashes, and the source text (Airtable and the
+# prototype) uses them freely, so every string is rewritten on the way out:
+#   a pair around an aside           -> parentheses
+#   before "and", "such as", ...     -> a comma
+#   after a one-word lead, or in a question -> a colon ("Low: looking around")
+#   otherwise                        -> a full stop, so the rest reads as its own sentence
+DASH = re.compile(r"\s*\u2014\s*|\s+\u2013\s+")
+JOINERS = ("and ", "but ", "or ", "so ", "which ", "such as ", "including ")
+
+
+def no_em_dash(text):
+    if not DASH.search(text):
+        return text
+    out = []
+    for sentence in re.split(r"(?<=[.?!])\s+", text):
+        parts = DASH.split(sentence)
+        if len(parts) == 3 and parts[1] and parts[2]:
+            sentence = f"{parts[0]} ({parts[1]}) {parts[2]}"
+        else:
+            sentence = parts[0]
+            for part in parts[1:]:
+                if not part:
+                    continue
+                if part.lower().startswith(JOINERS):
+                    sentence = f"{sentence}, {part}"
+                elif " " not in sentence.strip() or part.endswith("?"):
+                    sentence = f"{sentence}: {part}"
+                else:
+                    sentence = sentence.rstrip(",;:") + ". " + part[:1].upper() + part[1:]
+        out.append(sentence)
+    return " ".join(out)
+
+
+def plain(x):
+    if isinstance(x, str):
+        return no_em_dash(x)
+    if isinstance(x, list):
+        return [plain(v) for v in x]
+    if isinstance(x, dict):
+        return {k: plain(v) for k, v in x.items()}
+    return x
+
+
 def write(data):
-    data = dict(data, generatedAt=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
+    data = dict(plain(data), generatedAt=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
+    assert "\u2014" not in json.dumps(data, ensure_ascii=False), "an em dash survived no_em_dash()"
     json.dump(data, open(OUT, "w"), ensure_ascii=False, separators=(",", ":"))
     print(f"{len(data['opportunities'])} opportunities, {len(data['tools'])} tools, "
           f"{len(data['library'])} library entries, {sum(len(p['items']) for p in data['pillars'])} questions "
